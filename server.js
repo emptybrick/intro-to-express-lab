@@ -17,10 +17,10 @@ app.get('/', (req, res) => {
 
 
 /*------------1. Be Polite, Greet the User----------------*/
+
 app.get("/greetings/:userName", (req, res) => {
   res.send(`<h1>What a delight it is to see you once more, ${req.params.userName}!</h1>`)
 })
-
 
 /*------------2. Rolling the Dice----------------*/
 
@@ -73,38 +73,53 @@ app.get('/shoes', (req, res) => {
     { name: "Jet Boots", price: 1000, type: "boot" },
     { name: "Fifty-Inch Heels", price: 175, type: "heel" }
   ];
-    const underMax = shoes.filter(shoe => shoe.price < maxPrice)
-    const overMin = shoes.filter(shoe => shoe.price > minPrice)
-    const shoeTypeFiltered = shoes.filter(shoe => shoe.type === shoeType)
 
-  if (minPrice && !maxPrice && !shoeType) {
-    res.send(overMin);
+  let results = shoes;
+
+  if (minPrice) {
+    results = results.filter(shoe => shoe.price >= minPrice)
   }
-  else if (maxPrice && !minPrice && !shoeType) {
-    res.send(underMax);
+  if (maxPrice) {
+    results = results.filter(shoe => shoe.price <= maxPrice)
   }
-  else if (minPrice && maxPrice && !shoeType) {
-    const priceCheck = underMax.filter(shoe => shoe.price > minPrice)
-    res.send(priceCheck);
+  if (shoeType) {
+    results = results.filter(shoe => shoe.type === shoeType)
   }
-  else if (shoeType) {
-    if (minPrice && !maxPrice) {
-      const shoeFilter = overMin.filter(shoe => shoe.type === shoeType)
-      res.send(shoeFilter);
-    }
-    else if (maxPrice && !minPrice) {
-      const shoeFilter = underMax.filter(shoe => shoe.type === shoeType)
-      res.send(shoeFilter);
-    }
-    else if (maxPrice && minPrice) {
-      const priceCheck = underMax.filter(shoe => shoe.price > minPrice)
-      const shoeFilter = priceCheck.filter(shoe => shoe.type === shoeType)
-      res.send(shoeFilter);
-    }
-    else if (!minPrice && !maxPrice) {
-      res.send(shoeTypeFiltered);
-    }
+  if (results.length < 1) {
+    res.send(`<h2>Apologies but there are no items available with this search.`);
   } else {
-    res.send(shoes);
+    res.send(results);
   }
 })
+
+// first attempt
+// if (minPrice && !maxPrice && !shoeType) {
+//   res.send(overMin);
+// }
+// else if (maxPrice && !minPrice && !shoeType) {
+//   res.send(underMax);
+// }
+// else if (minPrice && maxPrice && !shoeType) {
+//   const priceCheck = underMax.filter(shoe => shoe.price > minPrice)
+//   res.send(priceCheck);
+// }
+// else if (shoeType) {
+//   if (minPrice && !maxPrice) {
+//     const shoeFilter = overMin.filter(shoe => shoe.type === shoeType)
+//     res.send(shoeFilter);
+//   }
+//   else if (maxPrice && !minPrice) {
+//     const shoeFilter = underMax.filter(shoe => shoe.type === shoeType)
+//     res.send(shoeFilter);
+//   }
+//   else if (maxPrice && minPrice) {
+//     const priceCheck = underMax.filter(shoe => shoe.price > minPrice)
+//     const shoeFilter = priceCheck.filter(shoe => shoe.type === shoeType)
+//     res.send(shoeFilter);
+//   }
+//   else if (!minPrice && !maxPrice) {
+//     res.send(shoeTypeFiltered);
+//   }
+// } else {
+//   res.send(shoes);
+// }
